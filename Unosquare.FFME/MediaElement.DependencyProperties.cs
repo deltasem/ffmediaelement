@@ -1,4 +1,6 @@
-﻿namespace Unosquare.FFME
+﻿using System.Threading.Tasks;
+
+namespace Unosquare.FFME
 {
     using Core;
     using Rendering;
@@ -274,10 +276,11 @@
             if (uri != null)
             {
                 element.Commands.Close();
-                element.Commands.Open(uri);
-
-                if (element.LoadedBehavior == System.Windows.Controls.MediaState.Play || element.CanPause == false)
-                    element.Commands.Play();
+                element.Commands.OpenAsync(uri).ContinueWith((task) =>
+                {
+                    if (element.LoadedBehavior == System.Windows.Controls.MediaState.Play || element.CanPause == false)
+                        element.Commands.Play();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
             }
             else
             {

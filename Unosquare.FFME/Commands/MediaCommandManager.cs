@@ -59,7 +59,7 @@
         /// The command is processed in a Thread Pool Thread.
         /// </summary>
         /// <param name="uri">The URI.</param>
-        public void Open(Uri uri)
+        public Task OpenAsync(Uri uri)
         {
             lock (SyncLock)
             {
@@ -69,8 +69,12 @@
             // Process the command in a background thread as opposed
             // to in the thread that it was called to prevent blocking.
             var command = new OpenCommand(this, uri);
-            ExecuteAndWaitFor(command);
-
+            return Task.Run(() =>
+            {
+                if (command.HasCompleted) return;
+                command.Execute();
+            });
+            
             // Debug.Assert(MediaElement.IsOpen == true && MediaElement.IsOpening == false && command.HasCompleted, "Synchronous conditions");
         }
 
