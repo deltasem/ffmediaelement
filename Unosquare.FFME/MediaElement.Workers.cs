@@ -250,9 +250,11 @@
 
                 MediaComponent comp = null;
                 MediaBlockBuffer blocks = null;
+                Console.WriteLine($"Startup thread: {Thread.CurrentThread.ManagedThreadId}");
 
                 while (IsTaskCancellationPending == false)
                 {
+                    Console.WriteLine($"Current thread: {Thread.CurrentThread.ManagedThreadId}");
                     #region 1. Setup the Decoding Cycle
 
                     // Singal a Seek starting operation
@@ -295,6 +297,7 @@
 
                     #region 2. Main Component Decoding
 
+                    Thread.Sleep(100);
                     // Capture component and blocks for easier readability
                     comp = Container.Components[main];
                     blocks = Blocks[main];
@@ -472,7 +475,10 @@
                     // Give it a break if there was nothing to decode.
                     // We probably need to wait for some more input
                     if (decodedFrameCount <= 0 && Commands.PendingCount <= 0)
+                    {
                         await Task.Delay(1);
+                        Console.WriteLine($"Thread after delay: {Thread.CurrentThread.ManagedThreadId}");
+                    }
 
                     #endregion
                 }

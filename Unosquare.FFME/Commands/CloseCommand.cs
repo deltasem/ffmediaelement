@@ -44,6 +44,7 @@
             var wrokers = new[] { m.PacketReadingTask, m.FrameDecodingTask, m.BlockRenderingTask };
             foreach (var w in wrokers)
             {
+                Console.WriteLine($"Abort thread: {w.ManagedThreadId}");
                 w.Abort();
                 w.Join();
             }
